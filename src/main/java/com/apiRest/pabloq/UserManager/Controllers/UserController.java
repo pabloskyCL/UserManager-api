@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/api/user")
 public class UserController {
     private final UserService userService;
 
@@ -15,9 +15,9 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping
-    public User getUser(@RequestBody User user) {
-            return this.userService.createUser(user);
+    @PostMapping(value = "demo")
+    public String demo(){
+        return "demo de endpoint privado";
     }
 
 
