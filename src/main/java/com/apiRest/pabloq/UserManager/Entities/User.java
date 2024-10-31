@@ -12,9 +12,6 @@ import java.util.List;
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
 public class User implements UserDetails {
 
-    public User() {
-    }
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -36,6 +33,79 @@ public class User implements UserDetails {
     private int age;
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    public User(){
+
+    }
+
+    private User(UserBuilder userBuilder) {
+        this.firstName = userBuilder.firstName;
+        this.lastName = userBuilder.lastName;
+        this.email = userBuilder.email;
+        this.password = userBuilder.password;
+        this.address = userBuilder.address;
+        this.phone = userBuilder.phone;
+        this.age = userBuilder.age;
+        this.role = userBuilder.role;
+    }
+
+    public static class UserBuilder {
+        private String firstName;
+        private String lastName;
+        private String email;
+        private String password;
+        private String address;
+        private String phone;
+        private int age;
+        @Enumerated(EnumType.STRING)
+        private Role role;
+
+        public UserBuilder firstName(String firstName){
+            this.firstName = firstName;
+            return this;
+        }
+
+        public UserBuilder lastName(String lastName){
+            this.lastName = lastName;
+            return this;
+        }
+
+        public UserBuilder email(String email) {
+            this.email = email;
+            return this;
+        }
+        public UserBuilder password(String password) {
+            this.password = password;
+            return this;
+        }
+
+
+        public UserBuilder address(String address){
+            this.address = address;
+            return this;
+        }
+
+        public UserBuilder age(int age){
+            this.age = age;
+            return this;
+        }
+
+        public UserBuilder phone(String phone){
+            this.phone = phone;
+            return this;
+        }
+
+        public UserBuilder role(Role role){
+            this.role = role;
+            return this;
+        }
+
+        public User build() {
+            return new User(this);
+        }
+
+    }
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
