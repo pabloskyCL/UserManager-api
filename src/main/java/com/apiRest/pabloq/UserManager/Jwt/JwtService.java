@@ -26,11 +26,13 @@ public class JwtService {
 
     private String getToken(Map<String, Object> extraClaims, User user) {
         return Jwts.builder()
-                .claims(extraClaims)
-                .claim("userId", user.getId())
+                .claims()
+                .add(extraClaims)
+                .add("userId", user.getId())
                 .subject(user.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
                 .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+                .and()
                 //TODO revisar porque no lee nada aqui durante la ejecución
                 .signWith(getKey())
 //                .signWith(getKey(), SignatureAlgorithm.HS256)
@@ -38,8 +40,8 @@ public class JwtService {
     }
 
     private SecretKey getKey() {
-//        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
-        byte[] keyBytes = secretKey.getBytes();
+        byte[] keyBytes = Decoders.BASE64.decode(secretKey);
+//        byte[] keyBytes = secretKey.getBytes();
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
