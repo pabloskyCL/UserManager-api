@@ -12,8 +12,8 @@ public class UserDto {
     String lastName;
     String phone;
     String address;
-//    @Enumerated(EnumType.STRING)
-//    Role role;
+    @Enumerated(EnumType.STRING)
+    Role role;
 
     public UserDto() {
     }
@@ -25,7 +25,7 @@ public class UserDto {
         this.lastName = userDtoBuilder.lastName;
         this.address = userDtoBuilder.address;
         this.phone = userDtoBuilder.phone;
-//        this.role = userDtoBuilder.role;
+        this.role = userDtoBuilder.role;
     }
 
     public static class UserDtoBuilder {
@@ -68,10 +68,10 @@ public class UserDto {
             return this;
         }
 
-//        public UserDtoBuilder role(Role role) {
-//            this.role = role;
-//            return this;
-//        }
+        public UserDtoBuilder role(Role role) {
+            this.role = role;
+            return this;
+        }
 
         public UserDto build(){
             return new UserDto(this);
@@ -125,5 +125,13 @@ public class UserDto {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 }

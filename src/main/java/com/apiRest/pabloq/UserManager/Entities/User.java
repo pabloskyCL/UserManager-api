@@ -24,15 +24,15 @@ public class User implements UserDetails {
     private String email;
     @Column(nullable = false)
     private String password;
-
-
     private String address;
-
     private String phone;
     @Column(nullable = false)
     private int age;
     @Enumerated(EnumType.STRING)
     private Role role;
+
+    @Column(nullable = false)
+    private boolean enabled;
 
     public User(){
 
@@ -47,6 +47,7 @@ public class User implements UserDetails {
         this.phone = userBuilder.phone;
         this.age = userBuilder.age;
         this.role = userBuilder.role;
+        this.enabled = userBuilder.enabled;
     }
 
     public static class UserBuilder {
@@ -59,6 +60,7 @@ public class User implements UserDetails {
         private int age;
         @Enumerated(EnumType.STRING)
         private Role role;
+        private boolean enabled;
 
         public UserBuilder firstName(String firstName){
             this.firstName = firstName;
@@ -100,6 +102,11 @@ public class User implements UserDetails {
             return this;
         }
 
+        public UserBuilder enabled(boolean enabled){
+            this.enabled = enabled;
+            return this;
+        }
+
         public User build() {
             return new User(this);
         }
@@ -134,7 +141,11 @@ public class User implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return true;
+        return this.enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public Long getId() {

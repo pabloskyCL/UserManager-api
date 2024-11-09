@@ -45,6 +45,7 @@ public class AuthService {
                 .age(request.getAge())
                 .phone(request.getPhone())
                 .role(Role.USER)
+                .enabled(true)
                 .build();
 
         userRepository.save(newUser);

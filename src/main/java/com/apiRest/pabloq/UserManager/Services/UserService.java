@@ -3,6 +3,7 @@ package com.apiRest.pabloq.UserManager.Services;
 import com.apiRest.pabloq.UserManager.Controllers.Request.UpdateRequest;
 import com.apiRest.pabloq.UserManager.Entities.Dto.UserDto;
 import com.apiRest.pabloq.UserManager.Entities.User;
+import com.apiRest.pabloq.UserManager.Jwt.JwtService;
 import com.apiRest.pabloq.UserManager.Repositories.IUserRepository;
 import org.springframework.stereotype.Service;
 
@@ -10,9 +11,11 @@ import org.springframework.stereotype.Service;
 public class UserService {
 
     private final IUserRepository userRepository;
+    private final JwtService jwtService;
 
-    public UserService(IUserRepository userRepository){
+    public UserService(IUserRepository userRepository, JwtService jwtService){
         this.userRepository = userRepository;
+        this.jwtService = jwtService;
     }
 
     public UserDto updateUser(UpdateRequest newUserInfo){
@@ -50,7 +53,12 @@ public class UserService {
                 .lastName(user.getLastName())
                 .address(user.getAddress())
                 .phone(user.getPhone())
+                .role(user.getRole())
                 .build();
+    }
+
+    public Long getUserIdFromToken(String token){
+        return this.jwtService.getUserIdFromToken(token);
     }
 
 }
