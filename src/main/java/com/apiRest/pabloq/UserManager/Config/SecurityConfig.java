@@ -34,11 +34,10 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authRequest ->
                         authRequest
-
                                 .requestMatchers(HttpMethod.OPTIONS).permitAll()
                                 .requestMatchers("/auth/**").permitAll()
                                 .requestMatchers(HttpMethod.DELETE, "/api/user/**").hasRole("ADMIN")
-
+                                .requestMatchers(HttpMethod.PUT,"/api/user/block/**").hasRole("ADMIN")
                                 .anyRequest().authenticated()
                 )
                 .exceptionHandling( exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))

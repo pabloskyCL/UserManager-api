@@ -3,7 +3,6 @@ package com.apiRest.pabloq.UserManager.Services;
 import com.apiRest.pabloq.UserManager.Controllers.Request.UpdateRequest;
 import com.apiRest.pabloq.UserManager.Entities.Dto.UserDto;
 import com.apiRest.pabloq.UserManager.Entities.Dto.UserRolePrivilegeDto;
-import com.apiRest.pabloq.UserManager.Entities.Privilege;
 import com.apiRest.pabloq.UserManager.Entities.Role;
 import com.apiRest.pabloq.UserManager.Entities.User;
 import com.apiRest.pabloq.UserManager.Jwt.JwtService;

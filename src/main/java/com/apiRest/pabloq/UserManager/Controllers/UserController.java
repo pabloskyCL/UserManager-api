@@ -1,20 +1,22 @@
 package com.apiRest.pabloq.UserManager.Controllers;
 
 import com.apiRest.pabloq.UserManager.Controllers.Request.UpdateRequest;
+import com.apiRest.pabloq.UserManager.Controllers.Response.BlockUserResponse;
 import com.apiRest.pabloq.UserManager.Controllers.Response.UserListResponse;
 import com.apiRest.pabloq.UserManager.Entities.Dto.UserDto;
 import com.apiRest.pabloq.UserManager.Entities.Dto.UserRolePrivilegeDto;
+import com.apiRest.pabloq.UserManager.Entities.User;
 import com.apiRest.pabloq.UserManager.Repositories.IUserRepository;
 import com.apiRest.pabloq.UserManager.Services.UserService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @RestController
 @RequestMapping("/api/user")
@@ -55,5 +57,19 @@ public class UserController {
         return ResponseEntity.ok(response);
     }
 
+    @PutMapping(value = "/block/{id}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @Transactional
+    public ResponseEntity<BlockUserResponse> blockOrEnableUser(@PathVariable Long id) {
+        Optional<User> targetUser = this.userRepository.findById(id);
+        if(targetUser.isPresent()){
+            User user = targetUser.get();
+            user.setEnabled(!user.isEnabled());
+            User savedUser = userRepository.save(user);
+            return ResponseEntity.ok(new BlockUserResponse(true,"El usuario: "+ savedUser.getEmail()+ " a sido bloqueado"));
+        }
+
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new BlockUserResponse(false, "usuario no encontrado"));
+
+    }
 
 }
