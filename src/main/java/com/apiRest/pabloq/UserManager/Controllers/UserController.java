@@ -3,6 +3,7 @@ package com.apiRest.pabloq.UserManager.Controllers;
 import com.apiRest.pabloq.UserManager.Controllers.Request.UpdateRequest;
 import com.apiRest.pabloq.UserManager.Controllers.Response.UserListResponse;
 import com.apiRest.pabloq.UserManager.Entities.Dto.UserDto;
+import com.apiRest.pabloq.UserManager.Entities.Dto.UserRolePrivilegeDto;
 import com.apiRest.pabloq.UserManager.Repositories.IUserRepository;
 import com.apiRest.pabloq.UserManager.Services.UserService;
 import jakarta.transaction.Transactional;
@@ -34,9 +35,10 @@ public class UserController {
     }
 
     @GetMapping
-    public List<UserListResponse> allUser(@RequestHeader("Authorization") String authorizationHeader) {
+    public List<UserRolePrivilegeDto> allUser(@RequestHeader("Authorization") String authorizationHeader) {
         Long userId = this.userService.getUserIdFromToken(authorizationHeader.replace("Bearer ", ""));
-        return this.userRepository.getAllWithoutCurrent(userId);
+
+        return this.userService.getUsersWithRolesAndPrivileges(userId);
     }
 
     @GetMapping(value = "/{id}", produces = MediaType.APPLICATION_JSON_VALUE)

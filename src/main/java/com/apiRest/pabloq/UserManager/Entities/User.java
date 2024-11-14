@@ -1,12 +1,15 @@
 package com.apiRest.pabloq.UserManager.Entities;
 
 import jakarta.persistence.*;
+import jakarta.transaction.Transactional;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "users", uniqueConstraints = {@UniqueConstraint(columnNames = {"email"})})
@@ -28,8 +31,20 @@ public class User implements UserDetails {
     private String phone;
     @Column(nullable = false)
     private int age;
-    @Enumerated(EnumType.STRING)
-    private Role role;
+
+    @ManyToMany
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(
+                    name = "user_id", referencedColumnName = "id"
+            ),
+            inverseJoinColumns = @JoinColumn(
+                    name = "role_id",
+                    referencedColumnName = "id"
+            )
+
+    )
+    private Set<Role> roles;
 
     @Column(nullable = false)
     private boolean enabled;
@@ -46,7 +61,7 @@ public class User implements UserDetails {
         this.address = userBuilder.address;
         this.phone = userBuilder.phone;
         this.age = userBuilder.age;
-        this.role = userBuilder.role;
+        this.roles = userBuilder.role;
         this.enabled = userBuilder.enabled;
     }
 
@@ -58,8 +73,7 @@ public class User implements UserDetails {
         private String address;
         private String phone;
         private int age;
-        @Enumerated(EnumType.STRING)
-        private Role role;
+        private Set<Role> role;
         private boolean enabled;
 
         public UserBuilder firstName(String firstName){
@@ -97,7 +111,7 @@ public class User implements UserDetails {
             return this;
         }
 
-        public UserBuilder role(Role role){
+        public UserBuilder role(Set<Role> role){
             this.role = role;
             return this;
         }
@@ -115,9 +129,40 @@ public class User implements UserDetails {
 
 
     @Override
+    @Transactional
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return List.of(new SimpleGrantedAuthority(role.name()));
+//        return List.of(new SimpleGrantedAuthority(roles));
+
+        List<String> privileges = getPrivileges();
+        return getGrantedAuthorities(privileges);
     }
+
+    private List<GrantedAuthority> getGrantedAuthorities(List<String> authorities){
+        List<GrantedAuthority> grantedAuthorities = new ArrayList<>();
+        for(String privilege: authorities){
+            grantedAuthorities.add(new SimpleGrantedAuthority(privilege));
+        }
+
+        return grantedAuthorities;
+
+    }
+
+    private List<String> getPrivileges(){
+        List<String> privileges = new ArrayList<>();
+        List<Privilege> collection = new ArrayList<>();
+        for(Role role: this.getRoles()){
+            privileges.add(role.getName());
+            collection.addAll(role.getPrivileges());
+        }
+
+        for(Privilege privilege: collection){
+            privileges.add(privilege.getName());
+        }
+
+        return privileges;
+    }
+
+
 
     @Override
     public String getUsername() {
@@ -212,11 +257,11 @@ public class User implements UserDetails {
         this.password = password;
     }
 
-    public Role getRole() {
-        return role;
+    public Set<Role> getRoles() {
+        return roles;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 }

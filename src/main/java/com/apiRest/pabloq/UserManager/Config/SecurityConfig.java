@@ -34,10 +34,14 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .authorizeHttpRequests(authRequest ->
                         authRequest
+
                                 .requestMatchers(HttpMethod.OPTIONS).permitAll()
                                 .requestMatchers("/auth/**").permitAll()
+                                .requestMatchers(HttpMethod.DELETE, "/api/user/**").hasRole("ADMIN")
+
                                 .anyRequest().authenticated()
-                ).exceptionHandling( exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
+                )
+                .exceptionHandling( exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
                 .httpBasic(Customizer.withDefaults())
                 .sessionManagement(sessionManager -> sessionManager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)

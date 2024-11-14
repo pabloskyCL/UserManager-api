@@ -4,6 +4,11 @@ import com.apiRest.pabloq.UserManager.Entities.Role;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Set;
+
 public class UserDto {
 
     Long id;
@@ -12,10 +17,20 @@ public class UserDto {
     String lastName;
     String phone;
     String address;
-    @Enumerated(EnumType.STRING)
-    Role role;
+
+    private List<String> roles;
 
     public UserDto() {
+    }
+
+    public UserDto(Long id, String email, String firstName, String lastName, String phone, String address, List<String> roles) {
+        this.id = id;
+        this.email = email;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.phone = phone;
+        this.address = address;
+        this.roles = roles;
     }
 
     private UserDto(UserDtoBuilder userDtoBuilder) {
@@ -25,7 +40,7 @@ public class UserDto {
         this.lastName = userDtoBuilder.lastName;
         this.address = userDtoBuilder.address;
         this.phone = userDtoBuilder.phone;
-        this.role = userDtoBuilder.role;
+        this.roles = userDtoBuilder.roles;
     }
 
     public static class UserDtoBuilder {
@@ -35,8 +50,7 @@ public class UserDto {
         private String email;
         private String address;
         private String phone;
-        @Enumerated(EnumType.STRING)
-        private Role role;
+        private List<String> roles;
 
         public UserDtoBuilder id(Long id) {
             this.id = id;
@@ -68,8 +82,8 @@ public class UserDto {
             return this;
         }
 
-        public UserDtoBuilder role(Role role) {
-            this.role = role;
+        public UserDtoBuilder roles(List<String> role) {
+            this.roles = role;
             return this;
         }
 
@@ -127,11 +141,11 @@ public class UserDto {
         this.address = address;
     }
 
-    public Role getRole() {
-        return role;
+    public List<String> getRoles() {
+        return roles;
     }
 
-    public void setRole(Role role) {
-        this.role = role;
+    public void setRoles(List<String> role) {
+        this.roles = role;
     }
 }

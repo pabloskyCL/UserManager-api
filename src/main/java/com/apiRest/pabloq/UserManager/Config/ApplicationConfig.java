@@ -1,6 +1,7 @@
 package com.apiRest.pabloq.UserManager.Config;
 
 import com.apiRest.pabloq.UserManager.Repositories.IUserRepository;
+import com.apiRest.pabloq.UserManager.Services.CustomUserDetailService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -15,10 +16,10 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Configuration
 public class ApplicationConfig {
 
-    private final IUserRepository userRepository;
 
-    public ApplicationConfig(IUserRepository userRepository) {
-        this.userRepository = userRepository;
+    private final CustomUserDetailService customUserDetailService;
+    public ApplicationConfig(CustomUserDetailService customUserDetailService) {
+        this.customUserDetailService = customUserDetailService;
     }
 
     @Bean
@@ -41,7 +42,7 @@ public class ApplicationConfig {
 
     @Bean
     public UserDetailsService userDetailService() {
-        return username -> userRepository.findByEmail(username).orElseThrow(() -> new UsernameNotFoundException("usuario no encontrado email invalido"));
+        return this.customUserDetailService;
     }
 
 
