@@ -33,7 +33,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         final String token = getTokenFromRequest(request);
         final String username;
-
         if (null == token) {
             filterChain.doFilter(request, response);
             return;
@@ -57,7 +56,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     private String getTokenFromRequest(HttpServletRequest request) {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
         Cookie[] cookies = request.getCookies();
-        System.out.println(new Date());
         if(cookies != null) {
             for (Cookie cookie : cookies) {
                 if(cookie.getName().equals("JWT-TOKEN")){
@@ -66,7 +64,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
         }
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            return authHeader.substring(7);
+            String token = authHeader.substring(7);
+            return token.equals("null") || token.isEmpty() || token.equals("undefined") ? null : token;
         }
 
         return null;
