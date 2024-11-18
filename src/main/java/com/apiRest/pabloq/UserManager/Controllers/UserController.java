@@ -2,25 +2,25 @@ package com.apiRest.pabloq.UserManager.Controllers;
 
 import com.apiRest.pabloq.UserManager.Controllers.Request.UpdateRequest;
 import com.apiRest.pabloq.UserManager.Controllers.Response.BlockUserResponse;
-import com.apiRest.pabloq.UserManager.Controllers.Response.UserListResponse;
 import com.apiRest.pabloq.UserManager.Entities.Dto.UserDto;
 import com.apiRest.pabloq.UserManager.Entities.Dto.UserRolePrivilegeDto;
 import com.apiRest.pabloq.UserManager.Entities.User;
 import com.apiRest.pabloq.UserManager.Repositories.IUserRepository;
 import com.apiRest.pabloq.UserManager.Services.UserService;
+import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
 @RestController
 @RequestMapping("/api/user")
-@CrossOrigin
+@CrossOrigin(originPatterns = {"http://localhost:4200"},allowedHeaders = "*", allowCredentials = "true")
 public class UserController {
     private final UserService userService;
     private final IUserRepository userRepository;
@@ -37,8 +37,12 @@ public class UserController {
     }
 
     @GetMapping
-    public List<UserRolePrivilegeDto> allUser(@RequestHeader("Authorization") String authorizationHeader) {
-        Long userId = this.userService.getUserIdFromToken(authorizationHeader.replace("Bearer ", ""));
+    public List<UserRolePrivilegeDto> allUser(@RequestHeader("Authorization") String authorizationHeader, HttpServletRequest request) {
+        String authorizationToken  =  authorizationHeader.replace("Bearer ", "");
+        Optional<Cookie> cookie =  Arrays.stream(request.getCookies()).filter(cookies -> cookies.getName().equals("JWT-TOKEN")).findFirst();
+
+        String token  = (authorizationToken.isEmpty()) ? authorizationToken : cookie.get().getValue() ;
+        Long userId = this.userService.getUserIdFromToken(token);
 
         return this.userService.getUsersWithRolesAndPrivileges(userId);
     }

@@ -72,7 +72,6 @@ public class UserService {
 
     public List<UserRolePrivilegeDto> getUsersWithRolesAndPrivileges(Long currentUserId){
         List<Object[]> results = userRepository.getAllWithAuthorities(currentUserId);
-        System.out.println(results);
         List<UserRolePrivilegeDto> dtoList = new ArrayList<>();
         for (Object[] row : results){
             UserRolePrivilegeDto dto = new UserRolePrivilegeDto(
