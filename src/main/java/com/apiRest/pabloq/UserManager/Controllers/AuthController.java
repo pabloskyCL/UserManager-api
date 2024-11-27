@@ -9,6 +9,9 @@ import com.apiRest.pabloq.UserManager.util.CookieUtil;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,7 +21,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
-@CrossOrigin(originPatterns = {"http://localhost:4200"},allowedHeaders = "*" ,allowCredentials = "true")
+@CrossOrigin(originPatterns = {"https://wssccl.space", "http://localhost:4200"},allowedHeaders = {"Authorization", "Cache-Control", "Content-Type","X-Amz-Date","X-Api-Key","X-Amz-Security-Token","X-Forwarded-For","Set-Cookie"}, exposedHeaders = {"Set-Cookie", "Authorization"} ,allowCredentials = "true")
 public class AuthController {
 
     private final AuthService authService;
@@ -29,20 +32,23 @@ public class AuthController {
         this.userService = userService;
     }
 
-    @PostMapping(value = "login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request, HttpServletResponse response) {
+    @PostMapping(value = "login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+        System.out.println(request.getUsername());
         AuthResponse authResponse = authService.login(request);
 
-        Cookie cookie = new Cookie("JWT-TOKEN", authResponse.getToken());
-        cookie.setPath("/");
-        cookie.setDomain("localhost");
-        cookie.setMaxAge(13000);
-        cookie.setSecure(false);
-        cookie.setHttpOnly(true);
+        ResponseCookie cookie = ResponseCookie.from("JWT-TOKEN", authResponse.getToken())
+                .path("/")
+                .maxAge(13000)
+                .secure(true)
+                .httpOnly(true)
+                .sameSite("None")
+                .build();
 
-        response.addCookie(cookie);
+//        response.setHeader(HttpHeaders.SET_COOKIE, cookie.toString());
 
-        return ResponseEntity.ok(authResponse);
+        return ResponseEntity.ok().header(HttpHeaders.SET_COOKIE, cookie.toString())
+                .body(authResponse);
     }
 
     @PostMapping(value = "register")

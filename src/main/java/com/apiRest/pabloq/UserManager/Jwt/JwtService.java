@@ -31,7 +31,7 @@ public class JwtService {
                 .add("userId", user.getId())
                 .subject(user.getUsername())
                 .issuedAt(new Date(System.currentTimeMillis()))
-                .expiration(new Date(System.currentTimeMillis() + 1000 * 60 * 24))
+                .expiration(new Date(System.currentTimeMillis() + (13000 * 1000)))
                 .and()
                 //TODO revisar porque no lee nada aqui durante la ejecución
                 .signWith(getKey())

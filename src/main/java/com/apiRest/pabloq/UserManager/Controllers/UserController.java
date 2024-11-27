@@ -21,7 +21,7 @@ import java.util.*;
 
 @RestController
 @RequestMapping("/api/user")
-@CrossOrigin(originPatterns = {"http://localhost:4200"},allowedHeaders = "*", allowCredentials = "true")
+@CrossOrigin(originPatterns = {"https://wssccl.space", "http://localhost:4200"},allowedHeaders = {"Authorization", "Cache-Control", "Content-Type","X-Amz-Date","X-Api-Key","X-Amz-Security-Token","X-Forwarded-For","Set-Cookie"}, exposedHeaders = {"Set-Cookie", "Authorization"}, allowCredentials = "true")
 public class UserController {
     private final UserService userService;
     private final IUserRepository userRepository;
