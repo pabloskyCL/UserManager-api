@@ -34,7 +34,6 @@ public class AuthController {
 
     @PostMapping(value = "login", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
-        System.out.println(request.getUsername());
         AuthResponse authResponse = authService.login(request);
 
         ResponseCookie cookie = ResponseCookie.from("JWT-TOKEN", authResponse.getToken())

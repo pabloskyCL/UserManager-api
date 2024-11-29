@@ -14,7 +14,8 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
     @Override
     public void commence(HttpServletRequest request, HttpServletResponse response, AuthenticationException authException) throws IOException, ServletException {
         // crear variable de entorno con la url del front-end
-        response.setHeader("Access-Control-Allow-Origin", "http://localhost:4200");
+        String origin = request.getHeader("Origin");
+        response.setHeader("Access-Control-Allow-Origin", origin);
         response.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
         response.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type");
         response.setHeader("Access-Control-Allow-Credentials", "true");
