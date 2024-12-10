@@ -6,7 +6,7 @@ import com.apiRest.pabloq.UserManager.Controllers.Response.AuthResponse;
 import com.apiRest.pabloq.UserManager.Services.AuthService;
 import com.apiRest.pabloq.UserManager.Services.UserService;
 import com.apiRest.pabloq.UserManager.util.CookieUtil;
-import jakarta.servlet.http.Cookie;
+
 import jakarta.servlet.http.HttpServletResponse;
 
 import org.springframework.http.HttpHeaders;

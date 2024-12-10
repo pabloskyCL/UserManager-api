@@ -86,7 +86,6 @@ public class UserService {
                     Arrays.asList((String[]) row[8])
                     );
             dtoList.add(dto);
-
         }
 
         return dtoList;
