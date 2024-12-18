@@ -1,13 +1,17 @@
 package com.apiRest.pabloq.UserManager.Controllers.Response;
 
+import java.util.List;
+
 public class AuthResponse {
 
     String token;
     Long userId;
+    List<String> roleNames;
 
-    public AuthResponse(String token, Long id) {
+    public AuthResponse(String token, Long id, List<String> roleNames) {
         this.userId = id;
         this.token = token;
+        this.roleNames = roleNames;
     }
 
     public AuthResponse() {
@@ -25,7 +29,15 @@ public class AuthResponse {
         return userId;
     }
 
-    public void setId(Long id) {
+    public void setUserId(Long id) {
         this.userId = id;
+    }
+
+    public List<String> getRoleNames() {
+        return roleNames;
+    }
+
+    public void setRoleNames(List<String> roleNames) {
+        this.roleNames = roleNames;
     }
 }

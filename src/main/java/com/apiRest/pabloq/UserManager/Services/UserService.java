@@ -6,6 +6,7 @@ import com.apiRest.pabloq.UserManager.Entities.Dto.UserRolePrivilegeDto;
 import com.apiRest.pabloq.UserManager.Entities.Role;
 import com.apiRest.pabloq.UserManager.Entities.User;
 import com.apiRest.pabloq.UserManager.Jwt.JwtService;
+import com.apiRest.pabloq.UserManager.Repositories.IRoleRepository;
 import com.apiRest.pabloq.UserManager.Repositories.IUserRepository;
 import org.springframework.stereotype.Service;
 
@@ -16,22 +17,28 @@ public class UserService {
 
     private final IUserRepository userRepository;
     private final JwtService jwtService;
+    private final IRoleRepository roleRepository;
 
-    public UserService(IUserRepository userRepository, JwtService jwtService){
+    public UserService(IUserRepository userRepository, IRoleRepository roleRepository, JwtService jwtService){
         this.userRepository = userRepository;
         this.jwtService = jwtService;
+        this.roleRepository = roleRepository;
     }
 
     public UserDto updateUser(UpdateRequest newUserInfo){
         User user = this.userRepository.findById(newUserInfo.getId()).orElseThrow(
                 () -> new RuntimeException("no existe un usuario con este id")
         );
-
+        Role role = this.roleRepository.findById((long)newUserInfo.getRole()).get();
+        Set<Role> roles = new HashSet<>();
+        roles.add(role);
+        System.out.println(role.getName());
             user.setFirstName(newUserInfo.getFirstName());
             user.setLastName(newUserInfo.getLastName());
             user.setEmail(newUserInfo.getEmail());
             user.setAddress(newUserInfo.getAddress());
             user.setPhone(newUserInfo.getPhone());
+            user.setRoles(roles);
             User modifiedUser = this.userRepository.save(user);
 
         return new UserDto.UserDtoBuilder()
@@ -41,9 +48,8 @@ public class UserService {
                 .email(modifiedUser.getEmail())
                 .address(modifiedUser.getAddress())
                 .phone(modifiedUser.getPhone())
+                .roles(Arrays.asList(role.getName()))
                 .build();
-
-
     }
 
     public UserDto getUser(Long id){
@@ -82,9 +88,10 @@ public class UserService {
                     (String) row[4],
                     (String) row[5],
                     (boolean) row[6],
-                    Arrays.asList((String[]) row[7]),
-                    Arrays.asList((String[]) row[8])
+                     row[7] == null ? new ArrayList<>(): Arrays.asList((String[]) row[7]),
+                    row[8] == null ? new ArrayList<>(): Arrays.asList((String[]) row[8])
                     );
+
             dtoList.add(dto);
         }
 

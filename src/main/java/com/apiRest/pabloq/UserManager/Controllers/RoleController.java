@@ -2,16 +2,19 @@ package com.apiRest.pabloq.UserManager.Controllers;
 
 
 import com.apiRest.pabloq.UserManager.Controllers.Request.RoleRequest;
+import com.apiRest.pabloq.UserManager.Controllers.Request.UpdatePermissionInRoleRequest;
 import com.apiRest.pabloq.UserManager.Controllers.Response.CreateRoleResponse;
 import com.apiRest.pabloq.UserManager.Entities.Dto.RolePermissionListDto;
 import com.apiRest.pabloq.UserManager.Services.RoleService;
 import org.springframework.http.MediaType;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
 
 @RestController
 @RequestMapping("/api/role")
+@PreAuthorize(value = "hasRole('ADMIN')")
 @CrossOrigin(originPatterns = {"https://wssccl.space", "http://localhost:4200"},allowedHeaders = {"Authorization", "Cache-Control", "Content-Type","X-Amz-Date","X-Api-Key","X-Amz-Security-Token","X-Forwarded-For","Set-Cookie"}, exposedHeaders = {"Set-Cookie", "Authorization"} ,allowCredentials = "true")
 public class RoleController {
 
@@ -36,10 +39,10 @@ public class RoleController {
         return this.roleService.deleteRole(id);
     }
 
-//    @PutMapping("/{id}")
-//    public RolePermissionListResponse updateRole(@PathVariable Long id, @RequestBody String[] permissions){
-//        return new RolePermissionListResponse(1L, "nombre", List.of("asdf"));
-//    }
+    @PutMapping(value = "/{id}/permission")
+    public CreateRoleResponse updatePermission(@PathVariable Long id, @RequestBody UpdatePermissionInRoleRequest request) throws Exception {
+        return this.roleService.updatePermissions(id ,request);
+    }
 
 
 }

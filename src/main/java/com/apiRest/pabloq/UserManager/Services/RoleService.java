@@ -1,6 +1,7 @@
 package com.apiRest.pabloq.UserManager.Services;
 
 import com.apiRest.pabloq.UserManager.Controllers.Request.RoleRequest;
+import com.apiRest.pabloq.UserManager.Controllers.Request.UpdatePermissionInRoleRequest;
 import com.apiRest.pabloq.UserManager.Controllers.Response.CreateRoleResponse;
 import com.apiRest.pabloq.UserManager.Entities.Dto.RolePermissionListDto;
 import com.apiRest.pabloq.UserManager.Entities.Privilege;
@@ -9,8 +10,12 @@ import com.apiRest.pabloq.UserManager.Repositories.IPrivilegeRepository;
 import com.apiRest.pabloq.UserManager.Repositories.IRoleRepository;
 import com.apiRest.pabloq.UserManager.Services.Interfaces.IPermissionService;
 import com.apiRest.pabloq.UserManager.Services.Interfaces.IRoleService;
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.HttpStatusCodeException;
 
 import java.util.*;
 
@@ -61,5 +66,19 @@ public class RoleService implements IRoleService {
         Map<String, String> response = new HashMap<>();
         response.put("success", "true");
         return response;
+    }
+
+    public CreateRoleResponse updatePermissions(Long id, UpdatePermissionInRoleRequest request) throws Exception {
+        Optional<Role> role = this.roleRepository.findById(id);
+        if(role.isPresent()){
+            Role fetched = role.get();
+            List<Privilege> privilegeList = this.privilegeRepository.findByIdIn(Arrays.asList(request.getPermissions()));
+             fetched.setPrivileges(new HashSet<>( privilegeList));
+             Role createdRole = this.roleRepository.save(fetched);
+            return new CreateRoleResponse(createdRole.getId(),createdRole.getName(),Arrays.asList(request.getPermissions()));
+
+        }
+
+        throw new Exception("rol no encontrado o privilegios(permisos) en mal formato");
     }
 }

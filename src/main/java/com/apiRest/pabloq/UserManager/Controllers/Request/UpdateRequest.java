@@ -7,13 +7,14 @@ public class UpdateRequest {
     String email;
     String address;
     String phone;
-
-    public UpdateRequest(String firstName, String lastName, String email, String address, String phone) {
+    Integer role;
+    public UpdateRequest(String firstName, String lastName, String email, String address, String phone, Integer role) {
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.address = address;
         this.phone = phone;
+        this.role = role;
     }
 
     public UpdateRequest() {
@@ -65,5 +66,13 @@ public class UpdateRequest {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public Integer getRole() {
+        return role;
+    }
+
+    public void setRole(Integer role) {
+        this.role = role;
     }
 }

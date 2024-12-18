@@ -14,8 +14,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.lang.reflect.Array;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.*;
 
 @Service
 public class AuthService {
@@ -38,8 +37,13 @@ public class AuthService {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(request.getUsername(), request.getPassword()));
         User user = userRepository.findByEmail(request.getUsername()).orElseThrow();
         String token = jwtService.getToken(user);
-
-        return new AuthResponse(token, user.getId());
+        Set<Role> roleList = user.getRoles();
+        List<String> roleNames = new ArrayList<>();
+        for(Role role: roleList){
+            roleNames.add(role.getName());
+        }
+        System.out.println(roleNames);
+        return new AuthResponse(token, user.getId(),roleNames);
     }
 
     public AuthResponse register(RegisterRequest request) {
@@ -53,11 +57,14 @@ public class AuthService {
                 .phone(request.getPhone())
                 .role(new HashSet<>(Arrays.asList(roleRepository.findByName("ROLE_USER"))))
                 .enabled(true)
-
                 .build();
 
-        userRepository.save(newUser);
-
-        return new AuthResponse(this.jwtService.getToken(newUser), newUser.getId());
+        User createdUser = userRepository.save(newUser);
+        Set<Role> roleList = createdUser.getRoles();
+        List<String> roleNames = new ArrayList<>();
+        for(Role role: roleList){
+            roleNames.add(role.getName());
+        }
+        return new AuthResponse(this.jwtService.getToken(createdUser), createdUser.getId(), roleNames);
     }
 }
